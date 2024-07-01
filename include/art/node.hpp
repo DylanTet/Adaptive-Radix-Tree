@@ -28,12 +28,12 @@ public:
    */
   int checkPrefix(const char *key, int keyLen) const;
 
-  char *prefix = nullptr;
-  uint16_t prefixLen = 0;
+  char *prefix_ = nullptr;
+  uint16_t prefixLen_ = 0;
 };
 
 template <class T> int Node<T>::checkPrefix(const char *key, int keyLen) const {
-  return std::mismatch(prefix, prefix + prefixLen, key).second - key;
+  return std::mismatch(prefix_, prefix_ + prefixLen_, key).second - key;
 }
 } // namespace art
 

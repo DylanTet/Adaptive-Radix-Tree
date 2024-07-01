@@ -3,6 +3,8 @@
 
 #include "innerNode.hpp"
 #include "node.hpp"
+#include <algorithm>
+#include <stdexcept>
 
 namespace art {
 template <class T> class Node4;
@@ -77,7 +79,68 @@ void Node16<T>::setChild(char partialKey, Node<T> *child) {
   ++nChildren_;
 }
 
-template <typename T> innerNode<T> *Node16<T>::grow() {}
+template <typename T> Node<T> *Node16<T>::delChild(char partialKey) {
+  Node<T> childToDelete = nullptr;
+  for (int i = 0; i < nChildren_; ++i) {
+    if (childToDelete == nullptr && keys_[i] == partialKey) {
+      childToDelete = children_[i];
+    }
+
+    // [a, c, d, 0]
+    if (childToDelete != nullptr) {
+      keys_[i] = i < nChildren_ - 1 ? keys_[i + 1] : 0;
+      children_[i] = i < nChildren_ - 1 ? children_[i + 1] : nullptr;
+    }
+  }
+
+  if (childToDelete != nullptr)
+    --nChildren_;
+
+  return childToDelete;
+}
+
+template <typename T> innerNode<T> *Node16<T>::grow() {
+  auto newNode = new Node48<T>();
+  newNode->prefix_ = this->prefix_;
+  newNode->prefixLen_ = this->prefixLen_;
+  newNode->nChildren_ = this->nChildren_;
+  std::copy(this->keys_, this->keys_ + this->nChildren_, newNode->keys_);
+  std::copy(this->children_, this->children_ + this->nChildren_,
+            newNode->children_);
+
+  delete this;
+  return newNode;
+}
+
+template <typename T> bool Node16<T>::isFull() const {
+  return nChildren_ == 16;
+}
+
+template <typename T> bool Node16<T>::isUnderfull() const {
+  return nChildren_ == 4;
+}
+
+template <typename T> char Node16<T>::nextPartialKey(char partialKey) const {
+  for (int i = 0; i < nChildren_; ++i) {
+    if (keys_[i] >= partialKey) {
+      return keys_[i];
+    }
+  }
+  throw std::out_of_range(
+      "There are no successors to the provided partial key");
+}
+
+template <typename T> char Node16<T>::prevPartialKey(char partialKey) const {
+  for (int i = nChildren_ - 1; i >= 0; --i) {
+    if (keys_[i] <= partialKey) {
+      return keys_[i];
+    }
+  }
+  throw std::out_of_range(
+      "There are no predecessors to the provided partial key");
+}
+
+template <typename T> int Node16<T>::nChildren() const { return nChildren_; }
 } // namespace art
 
 #endif // !ART_NODE_16_HPP
