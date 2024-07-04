@@ -248,16 +248,16 @@ template <typename T> T Art<T>::set(const char *key, T value) {
   }
 }
 
-template <class T> T art<T>::del(const char *key) {
+template <class T> T Art<T>::del(const char *key) {
   int depth = 0, key_len = std::strlen(key) + 1;
 
-  if (root_ == nullptr) {
+  if (root == nullptr) {
     return T{};
   }
 
   /* pointer to parent, current and child node */
-  node<T> **cur = &root_;
-  inner_node<T> **par = nullptr;
+  Node<T> **cur = &root;
+  innerNode<T> **par = nullptr;
 
   /* partial key of current and child node */
   char cur_partial_key = 0;
@@ -275,7 +275,7 @@ template <class T> T art<T>::del(const char *key) {
       if (!(**cur).is_leaf()) {
         return T{};
       }
-      auto value = static_cast<leaf_node<T> *>(*cur)->value_;
+      auto value = static_cast<LeafNode<T> *>(*cur)->value_;
       auto n_siblings = par != nullptr ? (**par).n_children() - 1 : 0;
 
       if (n_siblings == 0) {
@@ -339,7 +339,7 @@ template <class T> T art<T>::del(const char *key) {
         delete (*par);
 
         /* this looks crazy, but I know what I'm doing */
-        *par = static_cast<inner_node<T> *>(sibling);
+        *par = static_cast<innerNode<T> *>(sibling);
 
       } else /* if (n_siblings > 1) */ {
         /* => delete leaf node
@@ -368,21 +368,21 @@ template <class T> T art<T>::del(const char *key) {
     /* propagate down and repeat */
     cur_partial_key = key[depth + (**cur).prefix_len_];
     depth += (**cur).prefix_len_ + 1;
-    par = reinterpret_cast<inner_node<T> **>(cur);
+    par = reinterpret_cast<innerNode<T> **>(cur);
     cur = (**par).find_child(cur_partial_key);
   }
   return T{};
 }
 
-template <class T> tree_it<T> art<T>::begin() {
-  return tree_it<T>::min(this->root_);
+template <class T> treeIt<T> Art<T>::begin() {
+  return treeIt<T>::min(this->root);
 }
 
-template <class T> tree_it<T> art<T>::begin(const char *key) {
-  return tree_it<T>::greater_equal(this->root_, key);
+template <class T> treeIt<T> Art<T>::begin(const char *key) {
+  return tree_it<T>::greater_equal(this->root, key);
 }
 
-template <class T> tree_it<T> art<T>::end() { return tree_it<T>(); }
+template <class T> treeIt<T> Art<T>::end() { return treeIt<T>(); }
 
 } // namespace art
 

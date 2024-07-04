@@ -5,8 +5,6 @@
 
 namespace art {
 
-template <class T> class art;
-
 template <class T> class LeafNode : public Node<T> {
 public:
   explicit LeafNode(T value);

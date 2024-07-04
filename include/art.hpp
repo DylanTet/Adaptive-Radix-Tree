@@ -1,6 +1,7 @@
 #ifndef ART_HPP
 #define ART_HPP
 
+#include "art/art.hpp"
 #include "art/childIt.hpp"
 #include "art/innerNode.hpp"
 #include "art/leafNode.hpp"
