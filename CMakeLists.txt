@@ -15,6 +15,7 @@ target_include_directories(
 ### EXECUTABLES ###
 
 # Main executable
-add_executable(main src/example.cpp)
-
-target_include_directories(ART_DS PUBLIC ART)
+add_executable(main 
+  "${PROJECT_SOURCE_DIR}/src/example.cpp"
+  )
+target_link_libraries(main)

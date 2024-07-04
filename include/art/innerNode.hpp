@@ -13,7 +13,7 @@
 #include <stdexcept>
 
 namespace art {
-template <class T> class innerNode<T> : public Node<T> {
+template <class T> class innerNode : public Node<T> {
 public:
   innerNode() = default;
   innerNode(const innerNode<T> &other) = default;
